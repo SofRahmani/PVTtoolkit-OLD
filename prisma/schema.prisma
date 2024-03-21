@@ -6,22 +6,22 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -44,6 +44,27 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  province      Province? @relation(fields: [provinceId], references: [id])
+  provinceId    String?
+  articles      article[]
+  role          String    @default("USER")
+}
+
+model Province {
+  id   String  @id @default(cuid())
+  name String  @unique
+  taxe Decimal
+  User User[]
+}
+
+model article {
+  id        String   @id @default(cuid())
+  name      String
+  price     Decimal
+  isTaxable Boolean  @default(true)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
 }
 
 model VerificationToken {
